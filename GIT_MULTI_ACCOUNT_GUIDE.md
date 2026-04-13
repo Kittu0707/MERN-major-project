@@ -171,3 +171,14 @@ git push -u origin master
 - Token is stored in: `C:\Users\ASUS\.git-credentials`
 - Always revoke old tokens on GitHub after replacing them
 - Never share tokens in chat or commit them to code
+
+
+```
+Once you have your new token, run:
+
+
+cd "C:/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT"
+git remote set-url origin https://Kittu0707:YOUR_NEW_TOKEN@github.com/Kittu0707/MERN-major-project.git
+git push
+git remote set-url origin https://github.com/Kittu0707/MERN-major-project.git
+```
