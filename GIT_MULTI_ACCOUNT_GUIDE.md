@@ -151,16 +151,37 @@ git init
 git config user.name "Kittu0707"
 git config user.email "ayushinama07@gmail.com"
 
-# 4. Add remote
+# 4. Force this repo to use the store credential helper (avoids Windows Credential Manager conflict)
+git config credential.helper store
+git config credential.username Kittu0707
+
+# 5. Add remote
 git remote add origin https://github.com/Kittu0707/YOUR-REPO.git
 
-# 5. Create .gitignore (edit as needed)
+# 6. Create .gitignore (edit as needed)
 echo "node_modules/" > .gitignore
 
-# 6. Commit and push
+# 7. Commit and push
 git add .
 git commit -m "Initial commit"
 git push -u origin master
+```
+
+---
+
+## Why Steps 4 is Important (credential conflict fix)
+
+On this machine there are **two credential helpers**:
+- **System level** (`manager-core`): Windows Credential Manager — has Kamlesh480
+- **User level** (`store`): flat file — has Kittu0707
+
+Without step 4, git falls through to `manager-core` and authenticates as Kamlesh480,
+which gets a 403 on Kittu0707 repos.
+
+Running these two commands per repo fixes it permanently for that repo:
+```bash
+git config credential.helper store
+git config credential.username Kittu0707
 ```
 
 ---
@@ -171,14 +192,3 @@ git push -u origin master
 - Token is stored in: `C:\Users\ASUS\.git-credentials`
 - Always revoke old tokens on GitHub after replacing them
 - Never share tokens in chat or commit them to code
-
-
-```
-Once you have your new token, run:
-
-
-cd "C:/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT"
-git remote set-url origin https://Kittu0707:YOUR_NEW_TOKEN@github.com/Kittu0707/MERN-major-project.git
-git push
-git remote set-url origin https://github.com/Kittu0707/MERN-major-project.git
-```
