@@ -6,7 +6,13 @@
       "Bash(grep -n \"layout\" /c/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT/views/listings/*.ejs)",
       "Bash(mkdir -p \"/c/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT/views/layouts\")",
       "Bash(mv \"/c/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT/views/listings/layouts/boilerplate.ejs\" \"/c/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT/views/layouts/boilerplate.ejs\")",
-      "Bash(rm -rf \"/c/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT/views/listings/layouts\")"
+      "Bash(rm -rf \"/c/Users/ASUS/OneDrive/Desktop/MAJOR_PROJECT/views/listings/layouts\")",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":8080\")",
+      "Bash(tasklist /FI \"PID eq 11836\" /FO LIST)",
+      "Bash(wmic process *)",
+      "Bash(node fixData.js)",
+      "Bash(node -e ' *)"
     ]
   }
 }
