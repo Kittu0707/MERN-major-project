@@ -3,15 +3,14 @@
    <div class="row">
     <div class="col-8 offset-2">
         
-    <h3 class="topp mt-4">Listing Details:</h3>
+    <h3 class="topp mt-4"><b> <%= listing.title%></b></h3>
 
-    <!-- <%= listing%> -->
 <br>
   <div class="card col-6 offset-2 show-card" >
   <img src="<%= listing.image %>" class="card-img-top show-img" alt="listing_image">
   <div class="card-body">
     <p class="card-text heading"><br>
-        <%= listing.title%><br>
+       
         </p>
        <p class=> <b>DESCRIPTION:</b> &nbsp; &nbsp; <%= listing.description%><br>
      <b>  PRICE:</b> &nbsp;&nbsp; &#8377; <%= listing.price.toLocaleString("en-IN")%><br>
@@ -34,5 +33,45 @@
       </div>
 <br>
     </form>
+   <hr>
+    <div class="col-8 offset-2 mb-3" >
+      <h4>Leave a Review</h4>
+      <form action="/listings/<%= listing._id%>/reviews" method="POST">
+        <div class="mb-3 mt-3"> 
+          <label for="rating" class="form-label">Rating</label>
+          <input type="range" min="1" max="5" id="rating" name="review[rating]">
+        </div>
+
+        <div class="mb-3 mt-3">
+          <label for="comment" class="form-label">Comments</label>
+          <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control"></textarea>
+        </div>
+       
+        <button class="btn btn-outline-dark">Submit</button>
+      </form>
+    </div>
+
+    <% if (listing.reviews.length > 0) { %>
+    <div class="col-8 offset-2 mb-4">
+        <h4>All Reviews</h4>
+        <% for (let review of listing.reviews) { %>
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="mb-1"><b>Rating:</b>
+                    <% for(let i = 1; i <= 5; i++) { %>
+                        <%= i <= review.rating ? "★" : "☆" %>
+                    <% } %>
+                    (<%= review.rating %>/5)
+                </p>
+                <p class="mb-1"><b>Comment:</b> <%= review.comment %></p>
+                <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                    <button class="btn btn-sm btn-dark mt-1">Delete</button>
+                </form>
+            </div>
+        </div>
+        <% } %>
+    </div>
+    <% } %>
+
 </div>
 </div>

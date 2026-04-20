@@ -12,7 +12,8 @@
       "Bash(tasklist /FI \"PID eq 11836\" /FO LIST)",
       "Bash(wmic process *)",
       "Bash(node fixData.js)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(npm install *)"
     ]
   }
 }
