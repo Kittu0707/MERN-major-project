@@ -136,3 +136,29 @@ border: none !important;
     padding-left: 8rem;
 }
 
+/* STAR RATING */
+.star-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.star-rating-label {
+    margin-bottom: 0;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.star-display {
+    display: flex;
+    gap: 0.1rem;
+    margin-left: auto;
+}
+
+.star-display span {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+

@@ -7,7 +7,7 @@
 
 <br>
   <div class="card col-6 offset-2 show-card" >
-  <img src="<%= listing.image %>" class="card-img-top show-img" alt="listing_image">
+  <img src="<%= listing.image && listing.image.url ? listing.image.url : listing.image %>" class="card-img-top show-img" alt="listing_image">
   <div class="card-body">
     <p class="card-text heading"><br>
        </p>
@@ -38,10 +38,42 @@
     <div class="col-8 offset-2 mb-3" >
       <h4>Leave a Review</h4>
       <form action="/listings/<%= listing._id%>/reviews" method="POST">
-        <div class="mb-3 mt-3"> 
-          <label for="rating" class="form-label">Rating</label>
-          <input type="range" min="1" max="5" id="rating" name="review[rating]">
+        <div class="mb-3 mt-3 star-rating-row">
+          <label class="form-label star-rating-label">Rating</label>
+          <input type="range" min="1" max="5" id="ratingRange" name="review[rating]" value="3">
+          <div class="star-display" id="starDisplay">
+            <span>&#9733;</span>
+            <span>&#9733;</span>
+            <span>&#9733;</span>
+            <span>&#9733;</span>
+            <span>&#9733;</span>
+          </div>
         </div>
+
+        <script>
+          const range   = document.getElementById("ratingRange");
+          const stars   = document.querySelectorAll("#starDisplay span");
+
+          function updateStars(val) {
+            stars.forEach((s, i) => {
+              s.style.color = i < val ? "#ffc107" : "#ccc";
+            });
+          }
+
+          // sync stars with range on load and on change
+          updateStars(range.value);
+          range.addEventListener("input", () => updateStars(range.value));
+
+          // hover effects on stars
+          stars.forEach((s, i) => {
+            s.addEventListener("mouseover", () => updateStars(i + 1));
+            s.addEventListener("mouseleave", () => updateStars(range.value));
+            s.addEventListener("click", () => {
+              range.value = i + 1;
+              updateStars(i + 1);
+            });
+          });
+        </script>
 
         <div class="mb-3 mt-3">
           <label for="comment" class="form-label">Comments</label>
