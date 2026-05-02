@@ -3,7 +3,7 @@
 
     <!-- Logo + Explore -->
     <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
-    <a class="nav-link d-none d-md-inline explore-link" href="/listings"><b>Explore</b></a>
+    <a class="nav-link d-none d-md-inline explore-link" href="/listings"><b style="margin-right: 7rem; margin-left: 2rem;">Explore</b></a>
 
     <!-- Search bar - always visible, even on mobile -->
     <form class="search-form d-flex mx-auto" action="/listings" method="GET" autocomplete="off" id="searchForm">
@@ -23,9 +23,7 @@
 
     <!-- Collapsible links only -->
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link" href="/listings">Explore</a>
-      </div>
+      
       <div class="navbar-nav ms-auto">
         <a class="nav-link" href="/listings/new">Airbnb your home</a>
         <% if(!currUser) { %>
