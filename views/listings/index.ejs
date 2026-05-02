@@ -1,14 +1,184 @@
-<% layout("layouts/boilerplate")%>
+﻿<% layout("layouts/boilerplate")%>
 
-<body>
-    <h3>All Listings</h3>
-    <form method="GET" action ="/listings/new">
-        <button>Create New Listings</button>
-    </form>
- <ul>
+<style>
+  #filters {
+   display: flex;
+   flex-wrap: wrap;
+  }
+
+  .filter {
+    transition: transform 0.2s ease;
+    text-align: center;
+    margin-right: 2rem;
+    margin-top: 2rem;
+    opacity: 0.7;
+  }
+
+  .filter:hover {
+    opacity: 1;
+    cursor: pointer;
+    transform: scale(1.15);
+  }
+
+  .filter p {
+    font-size: 0.8rem;
+  }
+
+  .listing-col {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .listing-col.hiding {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+</style>
+
+  <div id="filters">
+  <div class="filter">
+    <i class="fa-solid fa-fire"></i>
+    <p> Trending  </p>
+  </div>
+
+    <div class="filter">
+    <i class="fa-solid fa-mountain-city"></i>
+    <p> Iconic cities </p>
+    </div>
+
+    <div class="filter">
+    <i class="fa-solid fa-mountain"></i>
+    <p> Mountain </p>
+    </div>
+
+    <div class="filter">
+    <i class="fa-brands fa-fort-awesome"></i>
+    <p> Castles </p>
+    </div>
+
+    <div class="filter">
+    <i class="fa-solid fa-person-swimming"></i>
+    <p> Amazing Pools </p>
+    </div>
+
+    <div class="filter">
+    <i class="fa-solid fa-tent"></i>
+    <p> Camping </p>
+    </div>
+
+    <div class="filter">
+   <i class="fa-solid fa-building-wheat"></i>
+    <p> Farms </p>
+    </div>
+
+    <div class="filter">
+    <i class="fa-regular fa-snowflake"></i>
+    <p> Arctic </p>
+    </div>
+
+  <div class="tax-toggle">
+    <div class="form-check-reverse form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+  <label class="form-check-label" for="switchCheckDefault">Display Total after Taxes</label>
+    </div>
+  </div>
+</div>
+
+  <br>
+  <h3 id="pageHeading"><b>Discover Amazing Places to Stay :</b></h3>
+  <br>
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1" id="listingsGrid">
 <% for(let listing of allListings) { %>
-    <li><a href="/listings/<%= listing._id%>"><%= listing.title%> </a></li>
+
+  <div class="listing-col col"
+    data-title="<%= listing.title.toLowerCase() %>"
+    data-location="<%= (listing.location || '').toLowerCase() %>"
+    data-country="<%= (listing.country || '').toLowerCase() %>">
+    <a href="/listings/<%= listing._id%>" class="listing-link">
+      <div class="card">
+        <img src="<%= listing.image && listing.image.url ? listing.image.url : listing.image %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
+        <div class="card-img-overlay"></div>
+        <div class="card-body">
+          <p class="card-text">
+            <b> <%= listing.title%></b> <br>
+            &#8377; <span class="listing-price" data-price="<%= listing.price %>"><%= listing.price.toLocaleString("en-IN") %></span>/Night
+            <span class="tax-info" style="display:none;"><i> &nbsp; (including 18% GST)</i></span>
+          </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
 <% } %>
-</ul>
-</body>
+</div>
+
+<div id="noResultsMsg" class="text-center mt-5" style="display:none;">
+  <i class="fa-solid fa-magnifying-glass" style="font-size:3rem; color:#cccccc;"></i>
+  <h4 class="mt-3">There is no destination matches your searches !</h4>
+  <p class="text-muted">Try Again !!</p>
+</div>
+
+<script>
+  // TAX TOGGLE
+  const toggle   = document.getElementById("switchCheckDefault");
+  const prices   = document.querySelectorAll(".listing-price");
+  const taxInfos = document.querySelectorAll(".tax-info");
+
+  toggle.addEventListener("change", () => {
+    prices.forEach((el, i) => {
+      const base = parseFloat(el.dataset.price);
+      if (toggle.checked) {
+        const withTax = Math.round(base * 1.18);
+        el.textContent = withTax.toLocaleString("en-IN");
+        taxInfos[i].style.display = "inline";
+      } else {
+        el.textContent = base.toLocaleString("en-IN");
+        taxInfos[i].style.display = "none";
+      }
+    });
+  });
+
+  // LIVE SEARCH FILTERING
+  (function() {
+    const liveInput    = document.getElementById("searchInput");
+    const cols         = document.querySelectorAll(".listing-col");
+    const noResultsMsg = document.getElementById("noResultsMsg");
+    const heading      = document.getElementById("pageHeading");
+
+    function filterListings(q) {
+      q = q.trim().toLowerCase();
+      let matchCount = 0;
+
+      cols.forEach(col => {
+        const title    = col.dataset.title    || "";
+        const location = col.dataset.location || "";
+        const country  = col.dataset.country  || "";
+        const matches  = !q || title.includes(q) || location.includes(q) || country.includes(q);
+
+        if (matches) {
+          col.style.display = "block";
+          requestAnimationFrame(() => col.classList.remove("hiding"));
+          matchCount++;
+        } else {
+          col.classList.add("hiding");
+          setTimeout(() => {
+            if (col.classList.contains("hiding")) col.style.display = "none";
+          }, 250);
+        }
+      });
+
+      noResultsMsg.style.display = (matchCount === 0 && q) ? "block" : "none";
+      heading.innerHTML = q
+        ? `<b>Results for "${q}"</b>`
+        : `<b>Discover Amazing Places to Stay :</b>`;
+    }
+
+    window._filterListings = filterListings;
+
+    if (liveInput) {
+      liveInput.addEventListener("input", () => filterListings(liveInput.value));
+    }
+  })();
+</script>
+
 

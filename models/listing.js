@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const review = require("./review");
 const Schema = mongoose.Schema;
 
 const listingSchema = new Schema({
@@ -10,19 +11,30 @@ const listingSchema = new Schema({
     description: String,
 
  image: {
-        filename: {
-            type: String,
-            default: "listingimage",
-        },
-        url: {
-            type: String,
-            default: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b",
-        },
+        url: String,
+        filename: String,
     },
 
     price: Number,
     location: String,
     country: String,
+
+    reviews: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Review",
+        },
+    ],
+    
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+    },
+
+    category: {
+        type: String,
+        enum: ["Trending", "Iconic cities", "Mountain", "Castles", "Amazing Pools", "Camping", "Farms", "Arctic"],
+    },
 });
 
 const Listing = mongoose.model("Listing", listingSchema);
