@@ -1,25 +1,53 @@
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+﻿<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i></a>
+    <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link"  href="/">Home</a>
-        <a class="nav-link" href="/listings">All Listings</a>
-        <a class="nav-link" href="/listings/new">Add New Listing</a>
+        <a class="nav-link" href="/listings">Explore</a>
       </div>
 
+      <form class="search-form mx-auto" action="/listings" method="GET" autocomplete="off" id="searchForm">
+        <div class="search-wrapper">
+          <input class="search-input" type="text" name="search" placeholder="Search destinations..." id="searchInput" value="<%= typeof search !== 'undefined' ? search : '' %>">
+          <button class="clear-btn" type="button" id="clearBtn">&#10005;</button>
+        </div>
+        <button class="search-btn" type="submit">
+          <i class="fa-solid fa-magnifying-glass"></i> <b>SEARCH</b>
+        </button>
+      </form>
+
        <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/listings/new">Airbnb your home</a>
+
         <% if(!currUser) { %>
-        <a class="nav-link"  href="/signup">Sign up</a>
-        <a class="nav-link" href="/login">Login</a>
+        <a class="nav-link"  href="/signup"><b>Sign up</b></a>
+        <a class="nav-link" href="/login"><b>Login</b></a>
         <% } %> <% if(currUser) { %>
-        <a class="nav-link" href="/logout">Logout</a>
+        <a class="nav-link" href="/logout"><b>logout</b></a>
         <% } %>
       </div>
 
     </div>
   </div>
+
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const clearBtn    = document.getElementById("clearBtn");
+
+  searchInput.addEventListener("input", () => {
+    clearBtn.style.display = searchInput.value ? "block" : "none";
+  });
+
+  clearBtn.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    searchInput.value = "";
+    clearBtn.style.display = "none";
+    if (typeof window._filterListings === "function") window._filterListings("");
+  });
+
+  if (searchInput.value) clearBtn.style.display = "block";
+</script>
 </nav>

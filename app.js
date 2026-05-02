@@ -9,6 +9,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const { MongoStore } = require('connect-mongo');
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -21,10 +22,23 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/reviews.js");
 const userRouter = require("./routes/user.js");
 
-mongoose.connect("mongodb://127.0.0.1:27017/Wanderlust")
-    .then(() => { console.log("MongoDB connected successfully"); })
-    .catch((err) => { console.log("Connection error:", err); });
+// mongoose.connect("mongodb://127.0.0.1:27017/Wanderlust")
+//     .then(() => { console.log("MongoDB connected successfully"); })
+//     .catch((err) => { console.log("Connection error:", err); });
 
+const dbUrl = process.env.ATLASDB_URL;
+
+main()
+  .then(() => {
+    console.log("connected to DB");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+async function main() {
+   await mongoose.connect(dbUrl);
+}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -33,8 +47,22 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
 
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: {
+        secret: process.env.SECRET,
+    },
+    touchAfter: 1*3600,
+});
+
+store.on("error", (err) => {
+    console.log("ERROR in MONGO SESSION STORE", err);
+});
+
 const sessionOptions = {
-    secret: "supersecret",
+    store,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -43,6 +71,8 @@ const sessionOptions = {
         httpOnly: true,
     },
 };
+
+
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -60,9 +90,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/", (req, res) => {
-    res.send("Hi i am root");
-});
+// app.get("/", (req, res) => {
+//     res.send("Hi i am root");
+// });
 
 // ROUTERS
 app.use("/listings", listingRouter);

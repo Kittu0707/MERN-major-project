@@ -1,10 +1,13 @@
 // here , we can do initialization of database
 
+require("dotenv").config();
 const mongoose = require("mongoose");
 const initdata = require("./data.js");
 const Listing = require("../models/listing.js");
 
-mongoose.connect("mongodb://127.0.0.1:27017/Wanderlust")
+const dbUrl = process.env.ATLASDB_URL;
+
+mongoose.connect(dbUrl)
     .then(() => {
         console.log("MongoDB connected successfully");
     })

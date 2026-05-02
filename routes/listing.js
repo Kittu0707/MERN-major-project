@@ -16,13 +16,16 @@ router.route("/")
     .get(wrapAsync(listingController.index))
     .post(isloggedIn, upload.single("listing[image]"), validateListing, wrapAsync(listingController.createListing));
 
+// SEARCH SUGGESTIONS
+router.get("/search", wrapAsync(listingController.searchSuggestions));
+
 // NEW FORM
 router.get("/new", isloggedIn, listingController.renderNewForm);
 
 // SHOW + UPDATE + DELETE
 router.route("/:id")
     .get(wrapAsync(listingController.showListing))
-    .put(isloggedIn, wrapAsync(isOwner), validateListing, wrapAsync(listingController.updateListing))
+    .put(isloggedIn, upload.single("listing[image]"), wrapAsync(isOwner), validateListing, wrapAsync(listingController.updateListing))
     .delete(isloggedIn, wrapAsync(isOwner), wrapAsync(listingController.destroyListing));
 
 // EDIT FORM

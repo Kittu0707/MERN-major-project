@@ -2,8 +2,27 @@ const Listing = require("../models/listing.js");
 const ExpressError = require("../utils/ExpressError.js");
 
 module.exports.index = async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", { allListings });
+    const { search } = req.query;
+    let allListings;
+    if (search && search.trim()) {
+        const regex = new RegExp(search.trim(), "i");
+        allListings = await Listing.find({
+            $or: [{ title: regex }, { location: regex }, { country: regex }]
+        });
+    } else {
+        allListings = await Listing.find({});
+    }
+    res.render("listings/index.ejs", { allListings, search: search || "" });
+};
+
+module.exports.searchSuggestions = async (req, res) => {
+    const q = req.query.q || "";
+    if (!q.trim()) return res.json([]);
+    const regex = new RegExp(q, "i");
+    const results = await Listing.find({
+        $or: [{ title: regex }, { location: regex }, { country: regex }]
+    }).select("title location country _id").limit(6);
+    res.json(results);
 };
 
 module.exports.renderNewForm = (req, res) => {
@@ -44,7 +63,11 @@ module.exports.renderEditForm = async (req, res, next) => {
 
 module.exports.updateListing = async (req, res) => {
     let { id } = req.params;
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    const listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    if (req.file) {
+        listing.image = { url: req.file.path, filename: req.file.filename };
+        await listing.save();
+    }
     req.flash("success", "Listing Updated!");
     res.redirect(`/listings/${id}`);
 };
