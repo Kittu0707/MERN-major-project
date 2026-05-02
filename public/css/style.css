@@ -103,8 +103,19 @@ body {
 
 @media (max-width: 768px) {
     .search-form {
+        width: auto;
+        flex: 1;
+        margin: 0 0.5rem !important;
+    }
+
+    /* Collapsed nav links push content down, no overlap */
+    .navbar-collapse.show {
+        background-color: #eeebe7;
+        padding: 0.5rem 0;
+        border-top: 1px solid #ddd;
         width: 100%;
-        margin: 0.5rem 0 !important;
+        position: relative;
+        z-index: 1;
     }
 }
 
