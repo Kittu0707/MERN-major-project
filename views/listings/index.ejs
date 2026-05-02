@@ -34,54 +34,44 @@
   }
 </style>
 
-  <div id="filters">
-  <div class="filter">
-    <i class="fa-solid fa-fire"></i>
-    <p> Trending  </p>
-  </div>
-
-    <div class="filter">
-    <i class="fa-solid fa-mountain-city"></i>
-    <p> Iconic cities </p>
-    </div>
-
-    <div class="filter">
-    <i class="fa-solid fa-mountain"></i>
-    <p> Mountain </p>
-    </div>
-
-    <div class="filter">
-    <i class="fa-brands fa-fort-awesome"></i>
-    <p> Castles </p>
-    </div>
-
-    <div class="filter">
-    <i class="fa-solid fa-person-swimming"></i>
-    <p> Amazing Pools </p>
-    </div>
-
-    <div class="filter">
-    <i class="fa-solid fa-tent"></i>
-    <p> Camping </p>
-    </div>
-
-    <div class="filter">
-   <i class="fa-solid fa-building-wheat"></i>
-    <p> Farms </p>
-    </div>
-
-    <div class="filter">
-    <i class="fa-regular fa-snowflake"></i>
-    <p> Arctic </p>
-    </div>
-
-  <div class="tax-toggle">
-    <div class="form-check-reverse form-switch">
-  <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-  <label class="form-check-label" for="switchCheckDefault">Display Total after Taxes</label>
+  <!-- Desktop filters (hidden on mobile) -->
+  <div id="filters" class="d-none d-md-flex">
+    <div class="filter"><i class="fa-solid fa-fire"></i><p> Trending </p></div>
+    <div class="filter"><i class="fa-solid fa-mountain-city"></i><p> Iconic cities </p></div>
+    <div class="filter"><i class="fa-solid fa-mountain"></i><p> Mountain </p></div>
+    <div class="filter"><i class="fa-brands fa-fort-awesome"></i><p> Castles </p></div>
+    <div class="filter"><i class="fa-solid fa-person-swimming"></i><p> Amazing Pools </p></div>
+    <div class="filter"><i class="fa-solid fa-tent"></i><p> Camping </p></div>
+    <div class="filter"><i class="fa-solid fa-building-wheat"></i><p> Farms </p></div>
+    <div class="filter"><i class="fa-regular fa-snowflake"></i><p> Arctic </p></div>
+    <div class="tax-toggle">
+      <div class="form-check-reverse form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+        <label class="form-check-label" for="switchCheckDefault">Display Total after Taxes</label>
+      </div>
     </div>
   </div>
-</div>
+
+  <!-- Mobile filters dropdown (hidden on desktop) -->
+  <div class="d-flex d-md-none align-items-center gap-2 mt-3 mb-1">
+    <select class="form-select" id="mobileCategoryFilter" style="max-width:60%;">
+      <option value="">All Categories</option>
+      <option value="trending">Trending</option>
+      <option value="iconic cities">Iconic cities</option>
+      <option value="mountain">Mountain</option>
+      <option value="castles">Castles</option>
+      <option value="amazing pools">Amazing Pools</option>
+      <option value="camping">Camping</option>
+      <option value="farms">Farms</option>
+      <option value="arctic">Arctic</option>
+    </select>
+    <div class="tax-toggle ms-auto">
+      <div class="form-check-reverse form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefaultMobile">
+        <label class="form-check-label" for="switchCheckDefaultMobile">+Tax</label>
+      </div>
+    </div>
+  </div>
 
   <br>
   <h3 id="pageHeading"><b>Discover Amazing Places to Stay :</b></h3>
@@ -119,22 +109,39 @@
 </div>
 
 <script>
-  // TAX TOGGLE
-  const toggle   = document.getElementById("switchCheckDefault");
-  const prices   = document.querySelectorAll(".listing-price");
-  const taxInfos = document.querySelectorAll(".tax-info");
+  // TAX TOGGLE (desktop + mobile synced)
+  const toggle       = document.getElementById("switchCheckDefault");
+  const toggleMobile = document.getElementById("switchCheckDefaultMobile");
+  const prices       = document.querySelectorAll(".listing-price");
+  const taxInfos     = document.querySelectorAll(".tax-info");
 
-  toggle.addEventListener("change", () => {
+  function applyTax(checked) {
     prices.forEach((el, i) => {
       const base = parseFloat(el.dataset.price);
-      if (toggle.checked) {
-        const withTax = Math.round(base * 1.18);
-        el.textContent = withTax.toLocaleString("en-IN");
+      if (checked) {
+        el.textContent = Math.round(base * 1.18).toLocaleString("en-IN");
         taxInfos[i].style.display = "inline";
       } else {
         el.textContent = base.toLocaleString("en-IN");
         taxInfos[i].style.display = "none";
       }
+    });
+  }
+
+  toggle.addEventListener("change", () => { toggleMobile.checked = toggle.checked; applyTax(toggle.checked); });
+  toggleMobile.addEventListener("change", () => { toggle.checked = toggleMobile.checked; applyTax(toggleMobile.checked); });
+
+  // MOBILE CATEGORY FILTER
+  const mobileCatFilter = document.getElementById("mobileCategoryFilter");
+  mobileCatFilter.addEventListener("change", () => {
+    const val = mobileCatFilter.value.toLowerCase();
+    const cols = document.querySelectorAll(".listing-col");
+    cols.forEach(col => {
+      const title    = col.dataset.title    || "";
+      const location = col.dataset.location || "";
+      const country  = col.dataset.country  || "";
+      const matches  = !val || title.includes(val) || location.includes(val) || country.includes(val);
+      col.style.display = matches ? "block" : "none";
     });
   });
 
