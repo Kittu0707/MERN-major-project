@@ -68,7 +68,7 @@
     <div class="tax-toggle ms-auto">
       <div class="form-check-reverse form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefaultMobile">
-        <label class="form-check-label" for="switchCheckDefaultMobile">+Tax</label>
+        <label class="form-check-label" for="switchCheckDefaultMobile">Display price after taxes</label>
       </div>
     </div>
   </div>
@@ -92,7 +92,7 @@
           <p class="card-text">
             <b> <%= listing.title%></b> <br>
             &#8377; <span class="listing-price" data-price="<%= listing.price %>"><%= listing.price.toLocaleString("en-IN") %></span>/Night
-            <span class="tax-info" style="display:none;"><i> &nbsp; (including 18% GST)</i></span>
+            <span class="tax-info" style="display:none;"><i> &nbsp; (includes 18% GST)</i></span>
           </p>
         </div>
       </div>
